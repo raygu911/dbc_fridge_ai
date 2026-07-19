@@ -1,0 +1,38 @@
+FridgeAI Intensive Training Program
+Build a Resume-Worthy AI Engineering Project from Scratch
+
+4 live sessions | 6–8 hours total | Beginner-friendly
+
+Build a complete AI-powered meal recommendation system based on a real-world engineering project. Throughout the program, you'll gain hands-on experience across the entire AI development lifecycle, including data processing, vector databases, Retrieval-Augmented Generation (RAG), backend development, cloud deployment, and production-ready engineering workflows.
+
+Core Topics Covered
+
+• Embeddings
+• Vector Databases
+• FastAPI
+• Celery
+• Docker
+• AWS
+• Terraform
+• CI/CD
+• Production-grade AI engineering best practices
+
+This program goes beyond simply building a project. You'll learn the system design principles, architectural decisions, and technical communication skills behind every implementation, enabling you to confidently explain your project architecture, technology choices, and deployment process during technical interviews.
+
+What You'll Gain
+
+• A high-quality, interview-ready AI engineering project that is scalable, well-documented, and resume-worthy
+• A comprehensive understanding of Retrieval-Augmented Generation (RAG) application development and production deployment
+• Practical experience with backend development, asynchronous task processing, containerization, and cloud infrastructure
+• The ability to confidently present your project and demonstrate engineering thinking during interviews
+
+Who Should Join
+
+• Software engineering internship candidates seeking stronger project experience
+• Students whose resumes lack standout technical projects
+• Developers who want to move beyond simply writing code and learn how to build complete, production-style AI applications
+
+Prerequisites
+
+• No prior AI experience is required.
+• Especially recommended for software engineering candidates who want to strengthen their resumes with a high-impact AI engineering project and improve their competitiveness in technical interviews.
