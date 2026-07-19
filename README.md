@@ -2,6 +2,8 @@
 
 > Build a Resume-Worthy AI Engineering Project from Scratch
 
+> **Project status:** FridgeAI is currently in early development. The 6–8 hour core course described below focuses on a guided, working MVP. Production-scale infrastructure and advanced AI features are documented as future directions and advanced-course material.
+
 FridgeAI is an end-to-end AI-powered meal recommendation system designed to demonstrate how modern AI applications are built using Retrieval-Augmented Generation (RAG), vector databases, backend APIs, asynchronous processing, containerization, and production-oriented engineering practices.
 
 Unlike many AI demo projects that focus only on model inference, FridgeAI emphasizes the complete AI engineering lifecycle—from data ingestion and semantic retrieval to deployment, testing, and system architecture.
@@ -29,7 +31,7 @@ By the end of this project, you will understand:
 - Asynchronous task processing
 - Containerization
 - CI/CD
-- Deployment fundamentals
+- Local deployment fundamentals
 - AI engineering best practices
 - System design
 - Technical communication for interviews
@@ -75,7 +77,7 @@ The core implementation focuses on building a complete AI application using matu
 | Testing | pytest |
 | Linting | Ruff |
 | CI/CD | GitHub Actions |
-| Deployment Fundamentals | AWS + Terraform |
+| Deployment | Local development with Docker Compose |
 
 ---
 
@@ -93,22 +95,17 @@ The core implementation focuses on building a complete AI application using matu
       ┌─────────────────────┼─────────────────────┐
       │                     │                     │
       ▼                     ▼                     ▼
- PostgreSQL             Qdrant              Celery Worker
-Structured Data      Vector Search              │
-                                                 ▼
-                                              Redis
-                                                 │
-                                                 ▼
-                                       Embedding Pipeline
-                                                 │
-                                                 ▼
-                                     Sentence Transformers
-                                                 │
-                                                 ▼
-                                             Ollama
-                                                 │
-                                                 ▼
-                                    AI Meal Recommendation
+ PostgreSQL             Qdrant                  Ollama
+Structured Data      Vector Search        Response Generation
+                            ▲
+                            │
+                     Celery Worker
+                      ├── Recipe ingestion
+                      └── Embedding generation
+                            ▲
+                            │
+                          Redis
+                     Task Message Broker
 ```
 
 ---
@@ -160,9 +157,11 @@ fridge-ai/
 
 **Build a Resume-Worthy AI Engineering Project from Scratch**
 
-**4 Live Sessions • 6–8 Hours Total • Beginner-Friendly**
+**4 Live Sessions • 6–8 Hours Total • Guided and Beginner-Friendly**
 
-Build a complete AI-powered meal recommendation system inspired by real-world engineering practices. Throughout the program, you'll gain hands-on experience across the AI development lifecycle, including data processing, semantic retrieval, backend development, containerization, deployment fundamentals, and production-oriented engineering workflows.
+Build a focused, working MVP of an AI-powered meal recommendation system using real-world engineering practices. The 6–8 hour core course concentrates on the essential end-to-end path: data modeling, semantic retrieval, RAG, backend APIs, background processing, a simple interface, testing, and local containerized execution.
+
+To keep this scope achievable, learners work from prepared starter infrastructure and follow guided implementation steps. Basic Python, Git, and command-line familiarity are recommended. Cloud deployment, infrastructure as code, production observability, orchestration, and scaling are intentionally reserved for future development or advanced courses.
 
 ---
 
@@ -207,11 +206,6 @@ Build a complete AI-powered meal recommendation system inspired by real-world en
 
 - GitHub Actions
 - Continuous Integration / Continuous Deployment (CI/CD)
-
-### Deployment Fundamentals
-
-- AWS
-- Terraform
 
 ### Software Engineering
 
@@ -288,7 +282,8 @@ Topics include:
 - Docker Compose
 - GitHub Actions
 - Automated testing
-- Deployment fundamentals
+- Local deployment with Docker Compose
+- Future deployment directions
 - Resume presentation
 - Technical interview storytelling
 
@@ -354,9 +349,9 @@ Install the following software:
 Clone the repository:
 
 ```bash
-git clone https://github.com/raygu911/fridge-ai.git
+git clone https://github.com/raygu911/dbc_fridge_ai.git
 
-cd fridge-ai
+cd dbc_fridge_ai
 ```
 
 Create the environment configuration:
@@ -375,8 +370,6 @@ Download a local language model:
 
 ```bash
 ollama pull qwen2.5
-
-ollama pull nomic-embed-text
 ```
 
 Open the application:
@@ -423,11 +416,11 @@ http://localhost:8501
 
 ---
 
-# Advanced Extensions
+# Future Directions and Advanced Courses
 
-The core implementation is intentionally designed to be achievable within the training program.
+The core implementation is intentionally limited to a guided MVP that can be completed within the 6–8 hour training program.
 
-After completing the core project, FridgeAI can be extended into a production-ready AI platform.
+The capabilities below are **not part of the core course**. They are future project directions or material for dedicated advanced courses after learners are comfortable with the foundational architecture.
 
 ## Workflow Orchestration
 
