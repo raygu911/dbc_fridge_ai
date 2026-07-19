@@ -229,12 +229,15 @@ Topics include:
 - PostgreSQL
 - Docker
 - Recipe data model
+- Basic Streamlit interface
+- Frontend-to-backend integration
 
 Deliverables:
 
 - Running backend API
 - Database connection
 - Initial project structure
+- Simple Streamlit UI connected to FastAPI
 
 ---
 
@@ -278,7 +281,7 @@ Deliverables:
 
 Topics include:
 
-- Streamlit
+- Streamlit UI refinement
 - Docker Compose
 - GitHub Actions
 - Automated testing
@@ -289,7 +292,8 @@ Topics include:
 
 Deliverables:
 
-- Complete end-to-end application
+- Polished end-to-end application
+- Refined user experience
 - Interview-ready project
 
 ---
