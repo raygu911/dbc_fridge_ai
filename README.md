@@ -2,11 +2,13 @@
 
 > Build a Resume-Worthy AI Engineering Project from Scratch
 
-> **Project status:** FridgeAI is currently in early development. The 6–8 hour core course described below focuses on a guided, working MVP. Production-scale infrastructure and advanced AI features are documented as future directions and advanced-course material.
+> **Project status:** Session 1 is complete. FridgeAI currently provides a working application foundation with FastAPI, PostgreSQL, Streamlit, Docker Compose, validation, and automated tests. AI capabilities will be introduced in later sessions.
 
-FridgeAI is an end-to-end AI-powered meal recommendation system designed to demonstrate how modern AI applications are built using Retrieval-Augmented Generation (RAG), vector databases, backend APIs, asynchronous processing, containerization, and production-oriented engineering practices.
+FridgeAI is an evolving meal recommendation system designed to demonstrate how modern AI applications are built using Retrieval-Augmented Generation (RAG), vector databases, backend APIs, asynchronous processing, containerization, and production-oriented engineering practices.
 
-Unlike many AI demo projects that focus only on model inference, FridgeAI emphasizes the complete AI engineering lifecycle—from data ingestion and semantic retrieval to deployment, testing, and system architecture.
+Session 1 provides the non-AI application foundation. Semantic retrieval and AI-generated recommendations will be introduced incrementally in later sessions.
+
+Unlike many AI demonstration projects that focus only on model inference, FridgeAI emphasizes the complete AI engineering lifecycle—from data ingestion and semantic retrieval to testing, deployment, and system architecture.
 
 This repository serves two purposes:
 
@@ -17,11 +19,11 @@ This repository serves two purposes:
 
 # Project Overview
 
-FridgeAI helps developers learn how to build complete AI applications rather than isolated AI demos.
+FridgeAI helps developers learn how to build complete AI applications rather than isolated AI demonstrations.
 
-The project demonstrates how traditional software engineering integrates with modern generative AI technologies through an end-to-end architecture that is both practical and extensible.
+The project demonstrates how traditional software engineering integrates with modern generative AI technologies through an end-to-end architecture that is practical, testable, and extensible.
 
-By the end of this project, you will understand:
+By the end of the complete project, learners will understand:
 
 - Retrieval-Augmented Generation (RAG)
 - Embedding generation
@@ -31,47 +33,80 @@ By the end of this project, you will understand:
 - Asynchronous task processing
 - Containerization
 - CI/CD
-- Local deployment fundamentals
-- AI engineering best practices
+- Local deployment
+- AI engineering practices
 - System design
 - Technical communication for interviews
 
 ---
 
-# Features
+# Current Implementation Status
 
-FridgeAI includes the following capabilities:
+Session 1 is complete.
+
+The current application includes:
+
+- FastAPI backend
+- PostgreSQL database
+- Recipe creation, listing, and retrieval
+- Pydantic request validation
+- Streamlit user interface
+- Docker Compose local environment
+- Persistent PostgreSQL storage
+- Automated API tests
+- Health checks for PostgreSQL and FastAPI
+- Ruff code-quality checks
+
+The following technologies will be added in later sessions:
+
+- Sentence Transformers
+- Embeddings
+- Qdrant
+- Semantic search
+- Retrieval-Augmented Generation
+- Ollama
+- Celery
+- Redis
+- GitHub Actions
+
+---
+
+# Planned Core Features
+
+Across the four-session roadmap, FridgeAI will include:
 
 - Ingredient-based meal recommendations
-- Natural language recipe search
+- Natural-language recipe search
 - Semantic recipe retrieval
-- Personalized meal recommendations
 - Dietary preference filtering
-- Allergy filtering
-- Retrieval-Augmented Generation (RAG)
+- Allergy-related filtering
+- Retrieval-Augmented Generation
 - AI-generated recommendation explanations
 - Recipe ingestion and indexing
 - Background processing for long-running tasks
-- Containerized deployment
+- Containerized local deployment
+- Automated testing and continuous integration
 - Modular and extensible architecture
+
+See **Current Implementation Status** for the capabilities available today.
+
+> FridgeAI is an educational project. Allergy-related filtering and AI-generated recommendations must not be treated as medical or food-safety advice.
 
 ---
 
 # Technology Stack
 
-## Core Implementation (Main Course)
-
-The core implementation focuses on building a complete AI application using mature, open-source technologies.
+## Core Implementation
 
 | Category | Technology |
-|----------|------------|
-| Programming Language | Python |
+| --- | --- |
+| Programming language | Python |
 | Backend API | FastAPI |
-| Relational Database | PostgreSQL |
-| Vector Database | Qdrant |
-| Embedding Models | Sentence Transformers |
-| Local LLM Runtime | Ollama |
-| Background Processing | Celery + Redis |
+| Relational database | PostgreSQL |
+| Vector database | Qdrant |
+| Embedding models | Sentence Transformers |
+| Local LLM runtime | Ollama |
+| Background processing | Celery and Redis |
 | Frontend | Streamlit |
 | Containerization | Docker Compose |
 | Testing | pytest |
@@ -79,9 +114,32 @@ The core implementation focuses on building a complete AI application using matu
 | CI/CD | GitHub Actions |
 | Deployment | Local development with Docker Compose |
 
+All core application technologies are open source or free for local development.
+
 ---
 
-# High-Level Architecture
+# Architecture
+
+## Current Session 1 Architecture
+
+```text
+User
+  │
+  ▼
+Streamlit UI
+  │
+  ▼
+FastAPI API
+  │
+  ▼
+PostgreSQL
+```
+
+The Streamlit interface communicates with FastAPI over HTTP. FastAPI validates requests and stores structured recipe data in PostgreSQL.
+
+## Target Architecture
+
+The following architecture represents the target system after all four core sessions. Components are introduced incrementally.
 
 ```text
                           User
@@ -113,36 +171,31 @@ Structured Data      Vector Search        Response Generation
 # Repository Structure
 
 ```text
-fridge-ai/
-│
+dbc_fridge_ai/
 ├── apps/
 │   ├── api/
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   └── recipes.py
 │   └── web/
-│
+│       ├── __init__.py
+│       └── app.py
 ├── src/
-│   ├── api/
-│   ├── database/
-│   ├── embeddings/
-│   ├── ingestion/
-│   ├── llm/
-│   ├── prompts/
-│   ├── rag/
-│   ├── retrieval/
-│   ├── services/
-│   └── tasks/
-│
-├── data/
-│
-├── infrastructure/
-│
-├── scripts/
-│
+│   └── fridge_ai/
+│       ├── __init__.py
+│       ├── config.py
+│       ├── database.py
+│       ├── models.py
+│       ├── schemas.py
+│       └── services.py
 ├── tests/
-│
-├── docs/
-│
-├── .github/
-│
+│   ├── __init__.py
+│   ├── test_health.py
+│   └── test_recipes.py
+├── .dockerignore
+├── .env.example
+├── .gitignore
+├── Dockerfile
 ├── docker-compose.yml
 ├── pyproject.toml
 ├── README.md
@@ -159,59 +212,74 @@ fridge-ai/
 
 **4 Live Sessions • 6–8 Hours Total • Guided and Beginner-Friendly**
 
-Build a focused, working MVP of an AI-powered meal recommendation system using real-world engineering practices. The 6–8 hour core course concentrates on the essential end-to-end path: data modeling, semantic retrieval, RAG, backend APIs, background processing, a simple interface, testing, and local containerized execution.
+Build a focused, working MVP of an AI-powered meal recommendation system using real-world engineering practices.
 
-To keep this scope achievable, learners work from prepared starter infrastructure and follow guided implementation steps. Basic Python, Git, and command-line familiarity are recommended. Cloud deployment, infrastructure as code, production observability, orchestration, and scaling are intentionally reserved for future development or advanced courses.
+The course concentrates on the essential end-to-end path:
+
+- Data modeling
+- Backend APIs
+- Semantic retrieval
+- Retrieval-Augmented Generation
+- Background processing
+- A simple user interface
+- Automated testing
+- Local containerized execution
+
+To keep this scope achievable, learners work from prepared starter infrastructure and follow guided implementation steps.
+
+Basic Python, Git, and command-line familiarity are recommended. Cloud deployment, infrastructure as code, production observability, orchestration, and scaling are reserved for future development or advanced courses.
 
 ---
 
-## Technologies & Concepts Covered
+# Technologies and Concepts Covered
 
-### Artificial Intelligence
+## Artificial Intelligence
 
-- Retrieval-Augmented Generation (RAG)
+- Retrieval-Augmented Generation
 - Embeddings
-- Semantic Search
-- Prompt Engineering
+- Semantic search
+- Prompt engineering
 
-### Backend Development
+## Backend Development
 
 - Python
 - FastAPI
 - REST APIs
-- Asynchronous Programming
+- Request validation
+- Asynchronous programming
 
-### Data Storage
+## Data Storage
 
 - PostgreSQL
-- Qdrant Vector Database
+- Qdrant vector database
 
-### AI Models
+## AI Models
 
 - Sentence Transformers
 - Ollama
-- Open-source Large Language Models
+- Open-weight language models
 
-### Background Processing
+## Background Processing
 
 - Celery
 - Redis
 
-### Infrastructure
+## Infrastructure
 
 - Docker
 - Docker Compose
 
-### DevOps
+## DevOps
 
 - GitHub Actions
-- Continuous Integration / Continuous Deployment (CI/CD)
+- Continuous integration
+- Continuous deployment concepts
 
-### Software Engineering
+## Software Engineering
 
 - Production-oriented AI engineering
 - System design
-- Clean architecture
+- Modular architecture
 - Testing
 - Technical interview communication
 
@@ -221,46 +289,54 @@ To keep this scope achievable, learners work from prepared starter infrastructur
 
 ## Session 1 — Application Foundation
 
-Topics include:
+Topics:
 
 - Project architecture
 - Development environment setup
+- Python project structure
 - FastAPI
+- REST APIs
+- Request validation
 - PostgreSQL
-- Docker
+- SQLAlchemy
+- Docker and Docker Compose
 - Recipe data model
+- Automated tests
 - Basic Streamlit interface
 - Frontend-to-backend integration
 
 Deliverables:
 
-- Running backend API
-- Database connection
-- Initial project structure
-- Simple Streamlit UI connected to FastAPI
-
----
+- Running FastAPI backend
+- PostgreSQL database connection
+- Recipe creation and retrieval API
+- Request validation
+- Automated API tests
+- Streamlit UI connected to FastAPI
+- Containerized local application
+- One-command startup with Docker Compose
 
 ## Session 2 — Semantic Retrieval
 
-Topics include:
+Topics:
 
 - Embeddings
 - Sentence Transformers
 - Qdrant
 - Vector search
 - Metadata filtering
+- Semantic recipe search
 
 Deliverables:
 
 - Recipe embedding pipeline
+- Qdrant recipe collection
 - Semantic search API
-
----
+- Search interface in Streamlit
 
 ## Session 3 — Retrieval-Augmented Generation
 
-Topics include:
+Topics:
 
 - Ollama
 - Prompt engineering
@@ -268,24 +344,26 @@ Topics include:
 - Celery
 - Redis
 - Recipe ingestion
-- Embedding generation
+- Background embedding generation
 
 Deliverables:
 
 - Complete RAG pipeline
+- AI-generated meal recommendations
 - Background indexing workflow
-
----
+- Recommendation explanations with retrieved context
 
 ## Session 4 — Production Engineering
 
-Topics include:
+Topics:
 
 - Streamlit UI refinement
-- Docker Compose
 - GitHub Actions
-- Automated testing
-- Local deployment with Docker Compose
+- Automated testing improvements
+- Error handling
+- Logging
+- Docker Compose refinement
+- Local deployment
 - Future deployment directions
 - Resume presentation
 - Technical interview storytelling
@@ -294,17 +372,20 @@ Deliverables:
 
 - Polished end-to-end application
 - Refined user experience
-- Interview-ready project
+- Continuous integration workflow
+- Improved test coverage
+- Interview-ready project documentation
 
 ---
 
 # Learning Outcomes
 
-After completing this project, you will be able to:
+After completing the project, learners will be able to:
 
 - Design an end-to-end AI application
-- Explain Retrieval-Augmented Generation (RAG)
+- Explain Retrieval-Augmented Generation
 - Build REST APIs using FastAPI
+- Validate API requests with Pydantic
 - Design relational and vector data storage
 - Generate and manage embeddings
 - Build semantic search applications
@@ -323,7 +404,7 @@ This project is intended for:
 - Computer science students
 - Junior software engineers
 - Developers transitioning into AI engineering
-- Anyone looking to build a high-impact portfolio project
+- Learners building their first substantial portfolio project
 
 ---
 
@@ -335,7 +416,7 @@ Recommended background:
 - Familiarity with Git
 - Basic command-line experience
 
-No prior AI or machine learning experience is required.
+No previous AI or machine-learning experience is required.
 
 ---
 
@@ -343,47 +424,226 @@ No prior AI or machine learning experience is required.
 
 ## Prerequisites
 
-Install the following software:
+Install:
 
-- Python 3.12+
 - Git
 - Docker Desktop
-- Ollama
 
-Clone the repository:
+Python 3.12 or later is also required for development outside Docker.
+
+## Clone the Repository
 
 ```bash
 git clone https://github.com/raygu911/dbc_fridge_ai.git
-
 cd dbc_fridge_ai
+git switch dev
 ```
 
-Create the environment configuration:
+## Configure the Environment
+
+Create your local configuration:
 
 ```bash
 cp .env.example .env
 ```
 
-Start the local services:
+The example values are suitable for local development. Do not use them for a public deployment.
+
+The `.env` file contains local configuration and is intentionally excluded from Git.
+
+## Start FridgeAI with Docker
+
+Build and start PostgreSQL, FastAPI, and Streamlit:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-Download a local language model:
+Check the services:
 
 ```bash
-ollama pull qwen2.5
+docker compose ps
 ```
 
-Open the application:
+The PostgreSQL and FastAPI services should report a healthy status.
 
+Open:
+
+- Streamlit UI: http://localhost:8501
+- FastAPI documentation: http://localhost:8000/docs
+- FastAPI health endpoint: http://localhost:8000/health
+
+## Stop FridgeAI
+
+Stop the containers while preserving recipe data:
+
+```bash
+docker compose down
 ```
-FastAPI:
-http://localhost:8000/docs
 
-Streamlit:
-http://localhost:8501
+To stop the containers and permanently remove local PostgreSQL data:
+
+```bash
+docker compose down --volumes
+```
+
+> Warning: `--volumes` permanently removes all locally stored recipes.
+
+---
+
+# Local Development
+
+## Create the Python Environment
+
+Using Conda:
+
+```bash
+conda create --name fridge-ai python=3.12
+conda activate fridge-ai
+```
+
+Install the application and development dependencies:
+
+```bash
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+```
+
+## Start PostgreSQL
+
+```bash
+docker compose up -d database
+```
+
+Check its status:
+
+```bash
+docker compose ps
+```
+
+## Start FastAPI
+
+In one terminal:
+
+```bash
+conda activate fridge-ai
+uvicorn apps.api.main:app --reload
+```
+
+FastAPI will be available at:
+
+- http://localhost:8000
+- http://localhost:8000/docs
+
+## Start Streamlit
+
+In another terminal:
+
+```bash
+conda activate fridge-ai
+streamlit run apps/web/app.py
+```
+
+Streamlit will be available at:
+
+- http://localhost:8501
+
+---
+
+# API Endpoints
+
+## General
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/` | Application welcome response |
+| GET | `/health` | API health check |
+
+## Recipes
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/v1/recipes` | Create a recipe |
+| GET | `/api/v1/recipes` | List recipes |
+| GET | `/api/v1/recipes/{recipe_id}` | Retrieve one recipe |
+
+Interactive API documentation is available at:
+
+- http://localhost:8000/docs
+
+---
+
+# Quality Checks
+
+Ensure PostgreSQL is running:
+
+```bash
+docker compose up -d database
+```
+
+Run linting:
+
+```bash
+ruff check .
+```
+
+Run tests:
+
+```bash
+pytest -v
+```
+
+The current test suite verifies:
+
+- Root endpoint
+- Health endpoint
+- Recipe creation
+- Recipe retrieval
+- Recipe listing
+- Missing-recipe behavior
+- Invalid-request validation
+- Database transaction rollback during tests
+
+---
+
+# Useful Docker Commands
+
+Start the complete application:
+
+```bash
+docker compose up --build -d
+```
+
+View service status:
+
+```bash
+docker compose ps
+```
+
+Follow all logs:
+
+```bash
+docker compose logs --follow
+```
+
+Follow one service:
+
+```bash
+docker compose logs --follow api
+docker compose logs --follow web
+docker compose logs --follow database
+```
+
+Stop the application:
+
+```bash
+docker compose down
+```
+
+Rebuild after dependency changes:
+
+```bash
+docker compose up --build -d
 ```
 
 ---
@@ -394,13 +654,16 @@ http://localhost:8501
 
 - FastAPI backend
 - PostgreSQL
-- Qdrant
-- Ollama
-- Sentence Transformers
-- Celery
-- Redis
 - Streamlit
 - Docker Compose
+- Automated testing
+- Qdrant
+- Sentence Transformers
+- Semantic recipe search
+- Ollama
+- Retrieval-Augmented Generation
+- Celery
+- Redis
 - GitHub Actions
 
 ## Version 2.0
@@ -408,7 +671,8 @@ http://localhost:8501
 - Hybrid retrieval
 - Cross-encoder reranking
 - Improved prompt templates
-- Better evaluation metrics
+- AI evaluation metrics
+- Improved recommendation quality
 
 ## Version 3.0
 
@@ -416,7 +680,7 @@ http://localhost:8501
 - Personalized recommendations
 - Nutrition tracking
 - Meal planning
-- Grocery list generation
+- Grocery-list generation
 
 ---
 
@@ -424,7 +688,7 @@ http://localhost:8501
 
 The core implementation is intentionally limited to a guided MVP that can be completed within the 6–8 hour training program.
 
-The capabilities below are **not part of the core course**. They are future project directions or material for dedicated advanced courses after learners are comfortable with the foundational architecture.
+The capabilities below are not part of the core course. They are future project directions or material for dedicated advanced courses.
 
 ## Workflow Orchestration
 
@@ -460,6 +724,7 @@ The capabilities below are **not part of the core course**. They are future proj
 - Authentication
 - Authorization
 - User accounts
+- Secret management
 
 ## Scalability
 
@@ -473,7 +738,15 @@ The capabilities below are **not part of the core course**. They are future proj
 
 Contributions, suggestions, and feature requests are welcome.
 
-If you find a bug or would like to propose an improvement, please open an issue or submit a pull request.
+If you find a bug or would like to propose an improvement:
+
+1. Open an issue describing the change.
+2. Create a feature branch.
+3. Add or update tests.
+4. Run Ruff and pytest.
+5. Submit a pull request.
+
+Beginner-friendly issues should be labeled `good first issue`.
 
 ---
 
@@ -481,9 +754,9 @@ If you find a bug or would like to propose an improvement, please open an issue 
 
 FridgeAI emphasizes engineering over experimentation.
 
-Instead of building another chatbot demonstration, this project teaches how modern AI systems are designed—from backend APIs and vector search to deployment and production-oriented software engineering.
+Instead of building another chatbot demonstration, this project teaches how modern AI systems are designed—from backend APIs and structured data to vector search, RAG, deployment, and production-oriented software engineering.
 
-The goal is not only to build a working application, but also to understand the architectural decisions behind every component so that you can confidently explain your design, technology choices, and implementation during technical interviews.
+The goal is not only to build a working application, but also to understand the architectural decisions behind every component. Learners should be able to explain their design, technology choices, implementation process, and tradeoffs during technical interviews.
 
 ---
 
