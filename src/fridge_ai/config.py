@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     app_env: str = "development"
     api_host: str = "0.0.0.0"
     api_port: int = 8000
+    database_url: str = (
+        "postgresql+psycopg://fridge_ai:change-me@localhost:5432/fridge_ai"
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",
