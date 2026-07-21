@@ -17,6 +17,7 @@ dependencies = [
     "psycopg[binary]",
     "streamlit",
     "httpx2",
+    "requests",
 ]
 
 [project.optional-dependencies]
