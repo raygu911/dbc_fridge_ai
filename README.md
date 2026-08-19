@@ -2,11 +2,11 @@
 
 > Build a Resume-Worthy AI Engineering Project from Scratch
 
-> **Project status:** Session 1 is complete. FridgeAI currently provides a working application foundation with FastAPI, PostgreSQL, Streamlit, Docker Compose, validation, and automated tests. AI capabilities will be introduced in later sessions.
+> **Project status:** Sessions 1 and 2 are complete. FridgeAI now provides semantic recipe search with FastEmbed embeddings and Qdrant vector storage alongside its FastAPI, PostgreSQL, Streamlit, Docker Compose, validation, and automated-test foundation.
 
 FridgeAI is an evolving meal recommendation system designed to demonstrate how modern AI applications are built using Retrieval-Augmented Generation (RAG), vector databases, backend APIs, asynchronous processing, containerization, and production-oriented engineering practices.
 
-Session 1 provides the non-AI application foundation. Semantic retrieval and AI-generated recommendations will be introduced incrementally in later sessions.
+Sessions 1 and 2 provide the application foundation and semantic retrieval pipeline. Retrieval-Augmented Generation and AI-generated recommendations will be introduced incrementally in later sessions.
 
 Unlike many AI demonstration projects that focus only on model inference, FridgeAI emphasizes the complete AI engineering lifecycle—from data ingestion and semantic retrieval to testing, deployment, and system architecture.
 
@@ -42,27 +42,29 @@ By the end of the complete project, learners will understand:
 
 # Current Implementation Status
 
-Session 1 is complete.
+Sessions 1 and 2 are complete.
 
 The current application includes:
 
 - FastAPI backend
 - PostgreSQL database
 - Recipe creation, listing, and retrieval
+- Recipe text generation for embedding
+- FastEmbed embedding generation with `BAAI/bge-small-en-v1.5`
+- Qdrant vector storage with persistent local data
+- Automatic vector indexing when recipes are created
+- Natural-language semantic recipe search with similarity scores
+- Semantic search API with configurable result limits
 - Pydantic request validation
-- Streamlit user interface
+- Streamlit browse, semantic-search, and recipe-creation interfaces
 - Docker Compose local environment
-- Persistent PostgreSQL storage
-- Automated API tests
-- Health checks for PostgreSQL and FastAPI
+- Persistent PostgreSQL, Qdrant, and model-cache storage
+- Automated API and embedding-validation tests
+- Health checks for PostgreSQL, Qdrant, and FastAPI
 - Ruff code-quality checks
 
 The following technologies will be added in later sessions:
 
-- Sentence Transformers
-- Embeddings
-- Qdrant
-- Semantic search
 - Retrieval-Augmented Generation
 - Ollama
 - Celery
@@ -104,7 +106,7 @@ See **Current Implementation Status** for the capabilities available today.
 | Backend API | FastAPI |
 | Relational database | PostgreSQL |
 | Vector database | Qdrant |
-| Embedding models | Sentence Transformers |
+| Embedding generation | FastEmbed (`BAAI/bge-small-en-v1.5`) |
 | Local LLM runtime | Ollama |
 | Background processing | Celery and Redis |
 | Frontend | Streamlit |
@@ -120,7 +122,7 @@ All core application technologies are open source or free for local development.
 
 # Architecture
 
-## Current Session 1 Architecture
+## Current Session 2 Architecture
 
 ```text
 User
@@ -130,12 +132,11 @@ Streamlit UI
   │
   ▼
 FastAPI API
-  │
-  ▼
-PostgreSQL
+  ├── PostgreSQL (structured recipe data)
+  └── FastEmbed ──► Qdrant (recipe vectors and semantic search)
 ```
 
-The Streamlit interface communicates with FastAPI over HTTP. FastAPI validates requests and stores structured recipe data in PostgreSQL.
+The Streamlit interface communicates with FastAPI over HTTP. FastAPI validates requests and stores structured recipe data in PostgreSQL. When a recipe is created, FastEmbed converts its name, description, ingredients, and dietary tags into an embedding that is indexed in Qdrant. Natural-language searches embed the query, retrieve similar Qdrant points, and join those matches back to the authoritative PostgreSQL records.
 
 ## Target Architecture
 
@@ -185,11 +186,14 @@ dbc_fridge_ai/
 │       ├── __init__.py
 │       ├── config.py
 │       ├── database.py
+│       ├── embeddings.py
 │       ├── models.py
 │       ├── schemas.py
-│       └── services.py
+│       ├── services.py
+│       └── vector_store.py
 ├── tests/
 │   ├── __init__.py
+│   ├── test_embeddings.py
 │   ├── test_health.py
 │   └── test_recipes.py
 ├── .dockerignore
@@ -318,13 +322,14 @@ Deliverables:
 
 ## Session 2 — Semantic Retrieval
 
+**Status: complete**
+
 Topics:
 
 - Embeddings
-- Sentence Transformers
+- FastEmbed and the BGE small English embedding model
 - Qdrant
 - Vector search
-- Metadata filtering
 - Semantic recipe search
 
 Deliverables:
@@ -453,7 +458,7 @@ The `.env` file contains local configuration and is intentionally excluded from 
 
 ## Start FridgeAI with Docker
 
-Build and start PostgreSQL, FastAPI, and Streamlit:
+Build and start PostgreSQL, Qdrant, FastAPI, and Streamlit:
 
 ```bash
 docker compose up --build -d
@@ -465,7 +470,7 @@ Check the services:
 docker compose ps
 ```
 
-The PostgreSQL and FastAPI services should report a healthy status.
+The PostgreSQL, Qdrant, and FastAPI services should report a healthy status.
 
 Open:
 
@@ -481,13 +486,13 @@ Stop the containers while preserving recipe data:
 docker compose down
 ```
 
-To stop the containers and permanently remove local PostgreSQL data:
+To stop the containers and permanently remove local PostgreSQL data, Qdrant vectors, and the downloaded model cache:
 
 ```bash
 docker compose down --volumes
 ```
 
-> Warning: `--volumes` permanently removes all locally stored recipes.
+> Warning: `--volumes` permanently removes all locally stored recipes, recipe vectors, and cached embedding models.
 
 ---
 
@@ -509,10 +514,10 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
-## Start PostgreSQL
+## Start PostgreSQL and Qdrant
 
 ```bash
-docker compose up -d database
+docker compose up -d database qdrant
 ```
 
 Check its status:
@@ -565,6 +570,7 @@ Streamlit will be available at:
 | --- | --- | --- |
 | POST | `/api/v1/recipes` | Create a recipe |
 | GET | `/api/v1/recipes` | List recipes |
+| GET | `/api/v1/recipes/search?query={text}&limit={1-20}` | Search recipes by semantic similarity |
 | GET | `/api/v1/recipes/{recipe_id}` | Retrieve one recipe |
 
 Interactive API documentation is available at:
@@ -575,7 +581,7 @@ Interactive API documentation is available at:
 
 # Quality Checks
 
-Ensure PostgreSQL is running:
+Ensure PostgreSQL is running (Qdrant is not required by the isolated test suite):
 
 ```bash
 docker compose up -d database
@@ -602,6 +608,8 @@ The current test suite verifies:
 - Recipe listing
 - Missing-recipe behavior
 - Invalid-request validation
+- Semantic-search result mapping and scores
+- Empty embedding-input validation
 - Database transaction rollback during tests
 
 ---
@@ -632,6 +640,7 @@ Follow one service:
 docker compose logs --follow api
 docker compose logs --follow web
 docker compose logs --follow database
+docker compose logs --follow qdrant
 ```
 
 Stop the application:

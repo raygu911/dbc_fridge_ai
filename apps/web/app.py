@@ -34,6 +34,37 @@ def split_tags(value: str) -> list[str]:
     ]
 
 
+def display_recipe(
+    recipe: dict[str, object],
+    score: float | None = None,
+) -> None:
+    title = (
+        f"🍽️ {recipe['name']} "
+        f"— {recipe['cooking_time_minutes']} minutes"
+    )
+
+    if score is not None:
+        title += f" — {score:.0%} match"
+
+    with st.expander(title):
+        st.write(recipe["description"])
+
+        st.markdown("**Ingredients**")
+        for ingredient in recipe["ingredients"]:
+            st.write(f"- {ingredient}")
+
+        st.markdown("**Instructions**")
+        for number, instruction in enumerate(
+            recipe["instructions"],
+            start=1,
+        ):
+            st.write(f"{number}. {instruction}")
+
+        tags = recipe.get("dietary_tags", [])
+        if tags:
+            st.caption("Tags: " + ", ".join(tags))
+
+
 with st.sidebar:
     st.header("System status")
 
@@ -50,8 +81,8 @@ with st.sidebar:
     st.code(API_URL, language=None)
 
 
-browse_tab, add_tab = st.tabs(
-    ["Browse recipes", "Add a recipe"]
+browse_tab, search_tab, add_tab = st.tabs(
+    ["Browse recipes", "Semantic search", "Add a recipe"]
 )
 
 with browse_tab:
@@ -70,31 +101,63 @@ with browse_tab:
                 st.info("No recipes have been added yet.")
 
             for recipe in recipes:
-                with st.expander(
-                    f"🍽️ {recipe['name']} "
-                    f"— {recipe['cooking_time_minutes']} minutes"
-                ):
-                    st.write(recipe["description"])
-
-                    st.markdown("**Ingredients**")
-                    for ingredient in recipe["ingredients"]:
-                        st.write(f"- {ingredient}")
-
-                    st.markdown("**Instructions**")
-                    for number, instruction in enumerate(
-                        recipe["instructions"],
-                        start=1,
-                    ):
-                        st.write(f"{number}. {instruction}")
-
-                    tags = recipe.get("dietary_tags", [])
-                    if tags:
-                        st.caption(
-                            "Tags: " + ", ".join(tags)
-                        )
+                display_recipe(recipe)
 
         except requests.RequestException as error:
             st.error(f"Could not load recipes: {error}")
+
+with search_tab:
+    st.subheader("Find recipes by meaning")
+    st.caption(
+        "Describe what you want to eat. "
+        "You do not need to use exact recipe names."
+    )
+
+    with st.form("semantic-search-form"):
+        search_query = st.text_input(
+            "What would you like to eat?",
+            placeholder=(
+                "For example: a fast meal made with leftover grains"
+            ),
+        )
+        result_limit = st.slider(
+            "Maximum results",
+            min_value=1,
+            max_value=10,
+            value=5,
+        )
+        search_submitted = st.form_submit_button(
+            "Search recipes",
+            type="primary",
+        )
+
+    if search_submitted:
+        if not search_query.strip():
+            st.warning("Please describe the meal you want.")
+        else:
+            try:
+                response = requests.get(
+                    f"{API_URL}/api/v1/recipes/search",
+                    params={
+                        "query": search_query.strip(),
+                        "limit": result_limit,
+                    },
+                    timeout=120,
+                )
+                response.raise_for_status()
+                results = response.json()
+
+                if not results:
+                    st.info("No matching recipes were found.")
+
+                for result in results:
+                    display_recipe(
+                        result["recipe"],
+                        score=result["score"],
+                    )
+
+            except requests.RequestException as error:
+                st.error(f"Could not search recipes: {error}")
 
 with add_tab:
     st.subheader("Create a recipe")

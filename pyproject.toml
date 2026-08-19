@@ -18,6 +18,7 @@ dependencies = [
     "streamlit",
     "httpx2",
     "requests",
+    "qdrant-client[fastembed]>=1.14.2",
 ]
 
 [project.optional-dependencies]
