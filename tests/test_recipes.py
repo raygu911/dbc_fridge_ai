@@ -7,6 +7,18 @@ from sqlalchemy.orm import Session
 from apps.api.main import app
 from fridge_ai.database import engine, get_db
 
+from types import SimpleNamespace
+
+@pytest.fixture(autouse=True)
+def disable_recipe_indexing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "apps.api.recipes.index_recipe",
+        lambda recipe: None,
+    )
+
+
 
 @pytest.fixture
 def database_session() -> Generator[Session, None, None]:
@@ -113,3 +125,49 @@ def test_invalid_recipe_returns_422(client: TestClient) -> None:
     )
 
     assert response.status_code == 422
+
+
+def test_semantic_recipe_search(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    create_response = client.post(
+        "/api/v1/recipes",
+        json=valid_recipe(),
+    )
+    recipe_id = create_response.json()["id"]
+
+    def fake_search_recipes(
+        query: str,
+        limit: int,
+    ) -> list[SimpleNamespace]:
+        assert query == "warming vegetable meal"
+        assert limit == 3
+
+        return [
+            SimpleNamespace(
+                id=recipe_id,
+                score=0.91,
+            )
+        ]
+
+    monkeypatch.setattr(
+        "apps.api.recipes.search_recipes",
+        fake_search_recipes,
+    )
+
+    response = client.get(
+        "/api/v1/recipes/search",
+        params={
+            "query": "warming vegetable meal",
+            "limit": 3,
+        },
+    )
+
+    assert response.status_code == 200
+
+    results = response.json()
+    assert len(results) == 1
+    assert results[0]["recipe"]["id"] == recipe_id
+    assert results[0]["recipe"]["name"] == "Test Vegetable Soup"
+    assert results[0]["score"] == pytest.approx(0.91)

@@ -1,11 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from fridge_ai.database import get_db
-from fridge_ai.schemas import RecipeCreate, RecipeResponse
+from fridge_ai.schemas import RecipeCreate, RecipeResponse, RecipeSearchResult
 from fridge_ai.services import create_recipe, get_recipe, list_recipes
+from fridge_ai.vector_store import index_recipe, search_recipes
 
 router = APIRouter(prefix="/api/v1/recipes", tags=["Recipes"])
 
@@ -21,12 +22,37 @@ def add_recipe(
     recipe_data: RecipeCreate,
     database: DatabaseSession,
 ) -> RecipeResponse:
-    return create_recipe(database, recipe_data)
+    recipe = create_recipe(database, recipe_data)
+    index_recipe(recipe)
+    return recipe
 
 
 @router.get("", response_model=list[RecipeResponse])
 def get_recipes(database: DatabaseSession) -> list[RecipeResponse]:
     return list_recipes(database)
+
+
+@router.get("/search", response_model=list[RecipeSearchResult])
+def semantic_recipe_search(
+    database: DatabaseSession,
+    query: Annotated[str, Query(min_length=1, max_length=200)],
+    limit: Annotated[int, Query(ge=1, le=20)] = 5,
+) -> list[RecipeSearchResult]:
+    matches = search_recipes(query=query, limit=limit)
+    results: list[RecipeSearchResult] = []
+
+    for match in matches:
+        recipe = get_recipe(database, int(match.id))
+
+        if recipe is not None:
+            results.append(
+                RecipeSearchResult(
+                    recipe=RecipeResponse.model_validate(recipe),
+                    score=match.score,
+                )
+            )
+
+    return results
 
 
 @router.get("/{recipe_id}", response_model=RecipeResponse)

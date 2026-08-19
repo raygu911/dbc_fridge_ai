@@ -28,3 +28,8 @@ class RecipeResponse(RecipeBase):
     id: int
     created_at: datetime
     updated_at: datetime
+
+
+class RecipeSearchResult(BaseModel):
+    recipe: RecipeResponse
+    score: float

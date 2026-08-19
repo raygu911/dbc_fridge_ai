@@ -19,6 +19,22 @@ services:
       start_period: 10s
     restart: unless-stopped
 
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "${QDRANT_PORT:-6333}:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "bash -c 'printf \"GET /healthz HTTP/1.0\\r\\n\\r\\n\" > /dev/tcp/localhost/6333'"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
   api:
     build:
       context: .
@@ -26,10 +42,17 @@ services:
       APP_NAME: ${APP_NAME:-FridgeAI}
       APP_ENV: ${APP_ENV:-development}
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-recipes}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-BAAI/bge-small-en-v1.5}
+    volumes:
+      - model_cache:/root/.cache
     ports:
       - "${API_PORT:-8000}:8000"
     depends_on:
       database:
+        condition: service_healthy
+      qdrant:
         condition: service_healthy
     healthcheck:
       test:
@@ -64,3 +87,5 @@ services:
 
 volumes:
   postgres_data:
+  qdrant_data:
+  model_cache:

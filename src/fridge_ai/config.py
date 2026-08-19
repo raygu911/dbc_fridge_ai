@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     database_url: str = (
         "postgresql+psycopg://fridge_ai:change-me@localhost:5432/fridge_ai"
     )
+    qdrant_url: str = "http://localhost:6333"
+    qdrant_collection: str = "recipes"
+    embedding_model: str = "BAAI/bge-small-en-v1.5"
 
     model_config = SettingsConfigDict(
         env_file=".env",
