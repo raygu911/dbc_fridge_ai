@@ -81,8 +81,13 @@ with st.sidebar:
     st.code(API_URL, language=None)
 
 
-browse_tab, search_tab, add_tab = st.tabs(
-    ["Browse recipes", "Semantic search", "Add a recipe"]
+browse_tab, search_tab, recommend_tab, add_tab = st.tabs(
+    [
+        "Browse recipes",
+        "Semantic search",
+        "AI recommendations",
+        "Add a recipe",
+    ]
 )
 
 with browse_tab:
@@ -158,6 +163,63 @@ with search_tab:
 
             except requests.RequestException as error:
                 st.error(f"Could not search recipes: {error}")
+
+with recommend_tab:
+    st.subheader("Get a grounded recommendation")
+    st.caption(
+        "FridgeAI retrieves relevant recipes, then uses a local "
+        "language model to explain the best match."
+    )
+
+    with st.form("recommendation-form"):
+        recommendation_query = st.text_area(
+            "Describe the meal you want",
+            placeholder=(
+                "For example: a quick vegan dinner with grains "
+                "and fresh vegetables"
+            ),
+        )
+        recommendation_limit = st.slider(
+            "Recipes to use as context",
+            min_value=1,
+            max_value=5,
+            value=3,
+        )
+        recommendation_submitted = st.form_submit_button(
+            "Generate recommendation",
+            type="primary",
+        )
+
+    if recommendation_submitted:
+        if not recommendation_query.strip():
+            st.warning("Please describe the meal you want.")
+        else:
+            try:
+                with st.spinner("Retrieving recipes and asking Ollama..."):
+                    response = requests.post(
+                        f"{API_URL}/api/v1/recommendations",
+                        json={
+                            "query": recommendation_query.strip(),
+                            "limit": recommendation_limit,
+                        },
+                        timeout=180,
+                    )
+                    response.raise_for_status()
+
+                result = response.json()
+                st.markdown("### Recommendation")
+                st.markdown(result["recommendation"])
+                st.caption(f"Generated locally with {result['model']}")
+
+                st.markdown("### Retrieved sources")
+                for source in result["sources"]:
+                    display_recipe(
+                        source["recipe"],
+                        score=source["score"],
+                    )
+
+            except requests.RequestException as error:
+                st.error(f"Could not generate a recommendation: {error}")
 
 with add_tab:
     st.subheader("Create a recipe")

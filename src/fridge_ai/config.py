@@ -14,6 +14,11 @@ class Settings(BaseSettings):
     qdrant_url: str = "http://localhost:6333"
     qdrant_collection: str = "recipes"
     embedding_model: str = "BAAI/bge-small-en-v1.5"
+    ollama_url: str = "http://localhost:11434"
+    ollama_model: str = "gemma3:4b"
+    rag_result_limit: int = 3
+    celery_broker_url: str = "redis://localhost:6379/0"
+    celery_result_backend: str = "redis://localhost:6379/1"
 
     model_config = SettingsConfigDict(
         env_file=".env",

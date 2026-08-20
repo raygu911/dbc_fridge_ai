@@ -33,3 +33,15 @@ class RecipeResponse(RecipeBase):
 class RecipeSearchResult(BaseModel):
     recipe: RecipeResponse
     score: float
+
+
+class RecommendationRequest(BaseModel):
+    query: str = Field(min_length=1, max_length=500)
+    limit: int = Field(default=3, ge=1, le=10)
+
+
+class RecommendationResponse(BaseModel):
+    query: str
+    recommendation: str
+    model: str
+    sources: list[RecipeSearchResult]
