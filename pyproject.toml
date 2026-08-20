@@ -19,6 +19,7 @@ dependencies = [
     "httpx2",
     "requests",
     "qdrant-client[fastembed]>=1.14.2",
+    "celery[redis]",
 ]
 
 [project.optional-dependencies]

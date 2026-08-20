@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from fridge_ai.database import get_db
 from fridge_ai.schemas import RecipeCreate, RecipeResponse, RecipeSearchResult
 from fridge_ai.services import create_recipe, get_recipe, list_recipes
-from fridge_ai.vector_store import index_recipe, search_recipes
+from fridge_ai.tasks import index_recipe_task
+from fridge_ai.vector_store import search_recipes
 
 router = APIRouter(prefix="/api/v1/recipes", tags=["Recipes"])
 
@@ -23,7 +24,7 @@ def add_recipe(
     database: DatabaseSession,
 ) -> RecipeResponse:
     recipe = create_recipe(database, recipe_data)
-    index_recipe(recipe)
+    index_recipe_task.delay(recipe.id)
     return recipe
 
 

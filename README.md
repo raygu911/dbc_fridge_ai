@@ -2,11 +2,11 @@
 
 > Build a Resume-Worthy AI Engineering Project from Scratch
 
-> **Project status:** Sessions 1 and 2 are complete. FridgeAI now provides semantic recipe search with FastEmbed embeddings and Qdrant vector storage alongside its FastAPI, PostgreSQL, Streamlit, Docker Compose, validation, and automated-test foundation.
+> **Project status:** Sessions 1–3 are complete. FridgeAI now provides grounded AI meal recommendations with Qdrant retrieval, a local Gemma 3 model through Ollama, and asynchronous recipe indexing with Celery and Redis.
 
 FridgeAI is an evolving meal recommendation system designed to demonstrate how modern AI applications are built using Retrieval-Augmented Generation (RAG), vector databases, backend APIs, asynchronous processing, containerization, and production-oriented engineering practices.
 
-Sessions 1 and 2 provide the application foundation and semantic retrieval pipeline. Retrieval-Augmented Generation and AI-generated recommendations will be introduced incrementally in later sessions.
+Sessions 1–3 provide the application foundation, semantic retrieval pipeline, Retrieval-Augmented Generation, and background embedding workflow. Session 4 will focus on production engineering and project polish.
 
 Unlike many AI demonstration projects that focus only on model inference, FridgeAI emphasizes the complete AI engineering lifecycle—from data ingestion and semantic retrieval to testing, deployment, and system architecture.
 
@@ -42,33 +42,68 @@ By the end of the complete project, learners will understand:
 
 # Current Implementation Status
 
-Sessions 1 and 2 are complete.
+Sessions 1–3 are complete.
 
-The current application includes:
+The time ranges below are implementation estimates based on the completed scope. They exclude model downloads, Docker image downloads, environment setup, breaks, and optional experimentation.
+
+| Session | Focus | Effort | Estimated time spent |
+| --- | --- | --- | --- |
+| Session 1 | Application foundation | Moderate | 1.5–2 hours |
+| Session 2 | Semantic retrieval | Moderate–high | 1.5–2 hours |
+| Session 3 | RAG and background processing | High | 2–2.5 hours |
+| **Completed total** | **Sessions 1–3** |  | **5–6.5 hours** |
+
+## Session 1 — Application Foundation
+
+Completed capabilities:
 
 - FastAPI backend
 - PostgreSQL database
 - Recipe creation, listing, and retrieval
+- Pydantic request validation
+- Initial Streamlit browse and recipe-creation interfaces
+- Docker Compose local environment
+- Persistent PostgreSQL storage
+- Automated API tests
+- PostgreSQL and FastAPI health checks
+
+## Session 2 — Semantic Retrieval
+
+Completed capabilities:
+
 - Recipe text generation for embedding
 - FastEmbed embedding generation with `BAAI/bge-small-en-v1.5`
 - Qdrant vector storage with persistent local data
-- Automatic vector indexing when recipes are created
+- Recipe vector indexing
 - Natural-language semantic recipe search with similarity scores
 - Semantic search API with configurable result limits
-- Pydantic request validation
-- Streamlit browse, semantic-search, and recipe-creation interfaces
-- Docker Compose local environment
-- Persistent PostgreSQL, Qdrant, and model-cache storage
-- Automated API and embedding-validation tests
-- Health checks for PostgreSQL, Qdrant, and FastAPI
+- Streamlit semantic-search interface
+- Embedding validation and semantic-search tests
+
+## Session 3 — RAG and Background Processing
+
+Completed capabilities:
+
+- Retrieval-Augmented Generation grounded in retrieved recipes
+- Local AI recommendation generation with Ollama and `gemma3:4b`
+- Recommendation responses with source recipes and similarity scores
+- Streamlit AI-recommendation interface
+- Celery background tasks with retry behavior
+- Redis task brokering and result storage
+- Asynchronous vector indexing when recipes are created
+- Persistent PostgreSQL, Qdrant, Redis, and model-cache storage
+- Prompt-grounding, recommendation API, and Celery task tests
+- Redis health checks and Celery worker integration
+
+## Shared Engineering Practices
+
 - Ruff code-quality checks
+- Automated pytest coverage across completed sessions
+- Health checks for PostgreSQL, Qdrant, Redis, and FastAPI
+- End-to-end API and UI smoke testing
 
 The following technologies will be added in later sessions:
 
-- Retrieval-Augmented Generation
-- Ollama
-- Celery
-- Redis
 - GitHub Actions
 
 ---
@@ -122,7 +157,7 @@ All core application technologies are open source or free for local development.
 
 # Architecture
 
-## Current Session 2 Architecture
+## Current Session 3 Architecture
 
 ```text
 User
@@ -133,10 +168,11 @@ Streamlit UI
   ▼
 FastAPI API
   ├── PostgreSQL (structured recipe data)
-  └── FastEmbed ──► Qdrant (recipe vectors and semantic search)
+  ├── Qdrant retrieval ──► Ollama / Gemma 3 (grounded generation)
+  └── Redis ──► Celery Worker ──► FastEmbed ──► Qdrant indexing
 ```
 
-The Streamlit interface communicates with FastAPI over HTTP. FastAPI validates requests and stores structured recipe data in PostgreSQL. When a recipe is created, FastEmbed converts its name, description, ingredients, and dietary tags into an embedding that is indexed in Qdrant. Natural-language searches embed the query, retrieve similar Qdrant points, and join those matches back to the authoritative PostgreSQL records.
+The Streamlit interface communicates with FastAPI over HTTP. Recommendation requests retrieve semantically similar recipes from Qdrant, join them to the authoritative PostgreSQL records, and provide only that grounded context to a local Gemma 3 model through Ollama. Recipe creation queues a Celery task through Redis so the worker can generate embeddings and update Qdrant without blocking the API response.
 
 ## Target Architecture
 
@@ -177,25 +213,30 @@ dbc_fridge_ai/
 │   ├── api/
 │   │   ├── __init__.py
 │   │   ├── main.py
-│   │   └── recipes.py
+│   │   ├── recipes.py
+│   │   └── recommendations.py
 │   └── web/
 │       ├── __init__.py
 │       └── app.py
 ├── src/
 │   └── fridge_ai/
 │       ├── __init__.py
+│       ├── celery_app.py
 │       ├── config.py
 │       ├── database.py
 │       ├── embeddings.py
 │       ├── models.py
+│       ├── rag.py
 │       ├── schemas.py
 │       ├── services.py
+│       ├── tasks.py
 │       └── vector_store.py
 ├── tests/
 │   ├── __init__.py
 │   ├── test_embeddings.py
 │   ├── test_health.py
-│   └── test_recipes.py
+│   ├── test_recipes.py
+│   └── test_tasks.py
 ├── .dockerignore
 ├── .env.example
 ├── .gitignore
@@ -259,7 +300,7 @@ Basic Python, Git, and command-line familiarity are recommended. Cloud deploymen
 
 ## AI Models
 
-- Sentence Transformers
+- FastEmbed and BGE embedding models
 - Ollama
 - Open-weight language models
 
@@ -340,6 +381,8 @@ Deliverables:
 - Search interface in Streamlit
 
 ## Session 3 — Retrieval-Augmented Generation
+
+**Status: complete**
 
 Topics:
 
@@ -433,8 +476,16 @@ Install:
 
 - Git
 - Docker Desktop
+- [Ollama](https://ollama.com/download/mac) on macOS 14 or later
 
 Python 3.12 or later is also required for development outside Docker.
+
+Download the local recommendation model and ensure Ollama is running:
+
+```bash
+ollama pull gemma3:4b
+curl http://localhost:11434/api/tags
+```
 
 ## Clone the Repository
 
@@ -458,7 +509,7 @@ The `.env` file contains local configuration and is intentionally excluded from 
 
 ## Start FridgeAI with Docker
 
-Build and start PostgreSQL, Qdrant, FastAPI, and Streamlit:
+Build and start PostgreSQL, Qdrant, Redis, the Celery worker, FastAPI, and Streamlit. Ollama runs natively on macOS so it can use Apple hardware acceleration.
 
 ```bash
 docker compose up --build -d
@@ -470,7 +521,7 @@ Check the services:
 docker compose ps
 ```
 
-The PostgreSQL, Qdrant, and FastAPI services should report a healthy status.
+The PostgreSQL, Qdrant, Redis, and FastAPI services should report a healthy status. The worker should report `ready` in its logs.
 
 Open:
 
@@ -486,13 +537,13 @@ Stop the containers while preserving recipe data:
 docker compose down
 ```
 
-To stop the containers and permanently remove local PostgreSQL data, Qdrant vectors, and the downloaded model cache:
+To stop the containers and permanently remove local PostgreSQL data, Qdrant vectors, Redis data, and the downloaded embedding-model cache:
 
 ```bash
 docker compose down --volumes
 ```
 
-> Warning: `--volumes` permanently removes all locally stored recipes, recipe vectors, and cached embedding models.
+> Warning: `--volumes` permanently removes all locally stored recipes, recipe vectors, task data, and cached embedding models. It does not remove the native Ollama model.
 
 ---
 
@@ -514,10 +565,10 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
-## Start PostgreSQL and Qdrant
+## Start PostgreSQL, Qdrant, and Redis
 
 ```bash
-docker compose up -d database qdrant
+docker compose up -d database qdrant redis
 ```
 
 Check its status:
@@ -539,6 +590,17 @@ FastAPI will be available at:
 
 - http://localhost:8000
 - http://localhost:8000/docs
+
+## Start the Celery Worker
+
+In another terminal:
+
+```bash
+conda activate fridge-ai
+celery --app=fridge_ai.celery_app:celery_app worker --loglevel=info
+```
+
+For local processes, `.env` points Celery to Redis at `localhost:6379`. Docker Compose uses the internal `redis` service hostname instead.
 
 ## Start Streamlit
 
@@ -572,6 +634,12 @@ Streamlit will be available at:
 | GET | `/api/v1/recipes` | List recipes |
 | GET | `/api/v1/recipes/search?query={text}&limit={1-20}` | Search recipes by semantic similarity |
 | GET | `/api/v1/recipes/{recipe_id}` | Retrieve one recipe |
+
+## Recommendations
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| POST | `/api/v1/recommendations` | Retrieve recipes and generate a grounded recommendation |
 
 Interactive API documentation is available at:
 
@@ -609,7 +677,10 @@ The current test suite verifies:
 - Missing-recipe behavior
 - Invalid-request validation
 - Semantic-search result mapping and scores
+- Grounded recommendation prompt construction
+- RAG recommendation response and source mapping
 - Empty embedding-input validation
+- Celery recipe-indexing task behavior
 - Database transaction rollback during tests
 
 ---
@@ -641,6 +712,8 @@ docker compose logs --follow api
 docker compose logs --follow web
 docker compose logs --follow database
 docker compose logs --follow qdrant
+docker compose logs --follow redis
+docker compose logs --follow worker
 ```
 
 Stop the application:
@@ -667,7 +740,7 @@ docker compose up --build -d
 - Docker Compose
 - Automated testing
 - Qdrant
-- Sentence Transformers
+- FastEmbed and BGE embedding models
 - Semantic recipe search
 - Ollama
 - Retrieval-Augmented Generation

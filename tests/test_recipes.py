@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from types import SimpleNamespace
 
 import pytest
 from fastapi.testclient import TestClient
@@ -7,18 +8,15 @@ from sqlalchemy.orm import Session
 from apps.api.main import app
 from fridge_ai.database import engine, get_db
 
-from types import SimpleNamespace
 
 @pytest.fixture(autouse=True)
-def disable_recipe_indexing(
+def disable_recipe_indexing_task(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     monkeypatch.setattr(
-        "apps.api.recipes.index_recipe",
-        lambda recipe: None,
+        "apps.api.recipes.index_recipe_task.delay",
+        lambda recipe_id: None,
     )
-
-
 
 @pytest.fixture
 def database_session() -> Generator[Session, None, None]:
@@ -171,3 +169,48 @@ def test_semantic_recipe_search(
     assert results[0]["recipe"]["id"] == recipe_id
     assert results[0]["recipe"]["name"] == "Test Vegetable Soup"
     assert results[0]["score"] == pytest.approx(0.91)
+
+
+def test_generate_grounded_recommendation(
+    client: TestClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    create_response = client.post(
+        "/api/v1/recipes",
+        json=valid_recipe(),
+    )
+    recipe_id = create_response.json()["id"]
+
+    monkeypatch.setattr(
+        "apps.api.recommendations.search_recipes",
+        lambda query, limit: [SimpleNamespace(id=recipe_id, score=0.93)],
+    )
+
+    def fake_generate_recommendation(
+        query: str,
+        recipes: list[object],
+    ) -> str:
+        assert query == "a warming vegan dinner"
+        assert len(recipes) == 1
+        assert recipes[0].name == "Test Vegetable Soup"
+        return "Try Test Vegetable Soup because it is warm and vegan."
+
+    monkeypatch.setattr(
+        "apps.api.recommendations.generate_recommendation",
+        fake_generate_recommendation,
+    )
+
+    response = client.post(
+        "/api/v1/recommendations",
+        json={
+            "query": "a warming vegan dinner",
+            "limit": 3,
+        },
+    )
+
+    assert response.status_code == 200
+    result = response.json()
+    assert result["model"] == "gemma3:4b"
+    assert result["sources"][0]["recipe"]["id"] == recipe_id
+    assert result["sources"][0]["score"] == pytest.approx(0.93)
+    assert "Test Vegetable Soup" in result["recommendation"]

@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from apps.api.recommendations import router as recommendations_router
 from apps.api.recipes import router as recipes_router
 from fridge_ai.config import get_settings
 from fridge_ai.database import create_database_tables
@@ -25,6 +26,7 @@ app = FastAPI(
 )
 
 app.include_router(recipes_router)
+app.include_router(recommendations_router)
 
 
 @app.get("/", tags=["General"])
