@@ -11,5 +11,3 @@ htmlcov
 tests
 data
 .DS_Store
-base
-advanced
