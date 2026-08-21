@@ -17,6 +17,25 @@ This repository serves two purposes:
 
 ---
 
+# Training Paths
+
+FridgeAI is organized into two top-level training tracks:
+
+- [Base training](base/) contains four sequential sessions. Every completed session is a standalone, runnable copy of the project at that milestone, including its application code, tests, Docker configuration, and guided README.
+- [Advanced training](advanced/) extends the completed MVP with hybrid retrieval, reranking, evaluation, observability, and cloud deployment techniques.
+
+To inspect or test a completed milestone without changing the current application, enter its directory directly:
+
+```bash
+cd base/session-2-semantic-search
+cp .env.example .env
+docker compose up --build -d
+```
+
+Only run one milestone environment at a time because the standalone projects use the same local service ports. Session snapshots contain source files only; dependencies, Docker images, databases, vector data, models, caches, and secrets are not duplicated in Git.
+
+---
+
 # Project Overview
 
 FridgeAI helps developers learn how to build complete AI applications rather than isolated AI demonstrations.
@@ -209,6 +228,19 @@ Structured Data      Vector Search        Response Generation
 
 ```text
 dbc_fridge_ai/
+├── base/
+│   ├── README.md
+│   ├── session-1-foundation/       # Standalone completed milestone
+│   ├── session-2-semantic-search/  # Standalone completed milestone
+│   ├── session-3-rag/              # Standalone completed milestone
+│   └── session-4-production/       # Planned; code added after Session 4
+├── advanced/
+│   ├── README.md
+│   ├── hybrid-retrieval/
+│   ├── reranking/
+│   ├── evaluation/
+│   ├── observability/
+│   └── cloud-deployment/
 ├── apps/
 │   ├── api/
 │   │   ├── __init__.py

@@ -18,8 +18,6 @@ dependencies = [
     "streamlit",
     "httpx2",
     "requests",
-    "qdrant-client[fastembed]>=1.14.2",
-    "celery[redis]",
 ]
 
 [project.optional-dependencies]
@@ -38,4 +36,3 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-extend-exclude = ["base", "advanced"]
