@@ -7,7 +7,7 @@ The base track contains four standalone project milestones. Each session directo
 | [Session 1](session-1-foundation/) | Application foundation | Moderate | 1.5–2 hours | Complete |
 | [Session 2](session-2-semantic-search/) | Embeddings and semantic retrieval | Moderate–high | 1.5–2 hours | Complete |
 | [Session 3](session-3-rag/) | RAG and background processing | High | 2–2.5 hours | Complete |
-| [Session 4](session-4-production/) | Production engineering | High | 1.5–2 hours | Planned |
+| [Session 4](session-4-production/) | Production engineering | High | 1.5–2 hours | Complete |
 
 ## How to Use a Milestone
 
