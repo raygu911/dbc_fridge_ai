@@ -174,7 +174,7 @@ The Ollama model is managed outside Docker and is not removed by either command.
 - [x] Gemma produces a grounded recommendation with sources.
 - [x] The Streamlit status panel and all four tabs work.
 - [x] Ruff, pytest, `git diff --check`, and Compose validation pass.
-- [ ] GitHub Actions passes on the pull request.
+- [x] GitHub Actions passes on the pull request.
 
 ## Interview Narrative
 
