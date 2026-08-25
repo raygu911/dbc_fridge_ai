@@ -4,6 +4,7 @@ from sqlalchemy.exc import OperationalError
 
 from apps.api.main import app
 from fridge_ai import health
+from fridge_ai.config import get_settings
 
 client = TestClient(app)
 
@@ -22,7 +23,7 @@ def test_health_check() -> None:
     assert response.json() == {
         "status": "healthy",
         "service": "fridge-ai-api",
-        "environment": "development",
+        "environment": get_settings().app_env,
     }
 
 
