@@ -1,8 +1,21 @@
+import logging
+
+from qdrant_client.http.exceptions import ApiException as QdrantApiException
 from redis import Redis
+from redis.exceptions import RedisError
+from sqlalchemy.exc import SQLAlchemyError
 
 from fridge_ai.config import get_settings
 from fridge_ai.database import check_database_connection
 from fridge_ai.vector_store import get_qdrant_client
+
+logger = logging.getLogger(__name__)
+
+DEPENDENCY_EXCEPTIONS = (
+    SQLAlchemyError,
+    QdrantApiException,
+    RedisError,
+)
 
 
 def check_qdrant_connection() -> bool:
@@ -30,7 +43,14 @@ def check_dependencies() -> dict[str, str]:
     for name, check in checks.items():
         try:
             results[name] = "healthy" if check() else "unhealthy"
-        except Exception:
+        except DEPENDENCY_EXCEPTIONS as error:
+            logger.warning(
+                "Dependency readiness check failed",
+                extra={
+                    "dependency": name,
+                    "error_type": type(error).__name__,
+                },
+            )
             results[name] = "unhealthy"
 
     return results

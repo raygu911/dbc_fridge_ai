@@ -1,18 +1,18 @@
+import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-import logging
 from time import perf_counter
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from apps.api.recommendations import router as recommendations_router
 from apps.api.recipes import router as recipes_router
+from apps.api.recommendations import router as recommendations_router
 from fridge_ai.config import get_settings
 from fridge_ai.database import create_database_tables
-from fridge_ai.logging import configure_logging
 from fridge_ai.health import check_dependencies
+from fridge_ai.logging import configure_logging
 from fridge_ai.schemas import HealthResponse, ReadinessResponse
 
 settings = get_settings()

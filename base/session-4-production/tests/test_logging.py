@@ -19,6 +19,8 @@ def test_json_formatter_includes_structured_request_fields() -> None:
     record.path = "/ready"
     record.status_code = 200
     record.duration_ms = 12.5
+    record.dependency = "qdrant"
+    record.error_type = "ResponseHandlingException"
 
     result = json.loads(JsonFormatter().format(record))
 
@@ -29,4 +31,6 @@ def test_json_formatter_includes_structured_request_fields() -> None:
     assert result["path"] == "/ready"
     assert result["status_code"] == 200
     assert result["duration_ms"] == 12.5
+    assert result["dependency"] == "qdrant"
+    assert result["error_type"] == "ResponseHandlingException"
     assert result["timestamp"].endswith("+00:00")
