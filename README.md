@@ -4,13 +4,13 @@
 
 FridgeAI is a curriculum-first repository. Application code is organized into standalone session milestones so trainees can run, test, compare, and explain the system at each stage instead of seeing only the final implementation.
 
-> **Current status:** Base Sessions 1–3 are complete. Session 4 is planned. Advanced modules are planned follow-up training.
+> **Current status:** All four base sessions are complete. Advanced modules are planned follow-up training.
 
 ## Training Tracks
 
 | Track | Purpose | Status |
 | --- | --- | --- |
-| [Base training](base/) | Build the complete FridgeAI MVP across four sequential sessions | Sessions 1–3 complete |
+| [Base training](base/) | Build the complete FridgeAI MVP across four sequential sessions | Complete |
 | [Advanced training](advanced/) | Extend the MVP with retrieval, evaluation, observability, and deployment techniques | Planned |
 
 ## Repository Structure
@@ -27,11 +27,11 @@ dbc_fridge_ai/
 │   └── session-4-production/
 └── advanced/
     ├── README.md
-    ├── hybrid-retrieval/
-    ├── reranking/
-    ├── evaluation/
-    ├── observability/
-    └── cloud-deployment/
+    ├── module-1-evaluation/
+    ├── module-2-hybrid-retrieval/
+    ├── module-3-reranking/
+    ├── module-4-observability/
+    └── module-5-cloud-deployment/
 ```
 
 The root contains curriculum navigation only. Run application, Docker, Ruff, and pytest commands from an individual session directory.
@@ -43,9 +43,9 @@ The root contains curriculum navigation only. Run application, Docker, Ruff, and
 | [Session 1 — Application Foundation](base/session-1-foundation/) | FastAPI, PostgreSQL, Streamlit, Docker, and tests | Moderate | 1.5–2 hours | Complete |
 | [Session 2 — Semantic Retrieval](base/session-2-semantic-search/) | FastEmbed, Qdrant, and semantic search | Moderate–high | 1.5–2 hours | Complete |
 | [Session 3 — RAG and Background Processing](base/session-3-rag/) | Ollama, grounded generation, Redis, and Celery | High | 2–2.5 hours | Complete |
-| [Session 4 — Production Engineering](base/session-4-production/) | CI, resilience, logging, UX, and project presentation | High | 1.5–2 hours | Planned |
+| [Session 4 — Production Engineering](base/session-4-production/) | CI, resilience, logging, UX, and project presentation | High | 1.5–2 hours | Complete |
 
-Estimated guided implementation time for completed Sessions 1–3 is **5–6.5 hours**. These estimates exclude environment setup, downloads, breaks, and optional experimentation.
+Estimated guided implementation time for all four base sessions is **6.5–8.5 hours**. These estimates exclude environment setup, downloads, breaks, and optional experimentation.
 
 ## How to Run a Session
 
@@ -109,15 +109,15 @@ Trainees build grounded AI recommendations, return retrieved sources, integrate 
 
 ### Session 4
 
-Session 4 will add production-oriented error handling, structured logging, continuous integration, expanded tests, UI refinement, operational documentation, and interview-ready project presentation. Its standalone code snapshot will be added after implementation and verification.
+Trainees productionize the completed application with correlated structured logging, liveness and dependency readiness probes, resilient UI errors, continuous integration, expanded failure-path tests, operational documentation, and an interview-ready project narrative.
 
 ## Advanced Training Goals
 
-The [advanced track](advanced/) will build on the completed base MVP through standalone modules:
+The [advanced track](advanced/) will build on the completed base MVP through standalone modules in a measurement-first sequence:
 
+- Retrieval and generation evaluation
 - Hybrid semantic and lexical retrieval
 - Cross-encoder reranking
-- Retrieval and generation evaluation
 - Tracing, metrics, logging, and operational dashboards
 - Managed cloud deployment and infrastructure as code
 
