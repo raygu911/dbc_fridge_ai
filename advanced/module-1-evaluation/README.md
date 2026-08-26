@@ -5,7 +5,7 @@ Build the measurement foundation used to decide whether every later retrieval or
 - **Effort:** High
 - **Estimated guided time:** 3–4 hours
 - **Status:** Planned
-- **Baseline:** `base/session-4-production`
+- **Baseline:** completed Base Session 4; use `base/session-2-rag-and-production` until cloud sessions are implemented
 
 ## Learning Outcomes
 

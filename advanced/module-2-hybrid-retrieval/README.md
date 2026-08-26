@@ -31,7 +31,7 @@ Combine semantic similarity with lexical search so FridgeAI handles both concept
 - Hybrid retrieval service with configurable candidate counts and fusion constant
 - Filtered search API and Streamlit controls
 - Unit tests for fusion, duplicates, empty result sets, and filters
-- Before/after evaluation report against semantic-only Session 4
+- Before/after evaluation report against the frozen semantic-only baseline
 
 ## Verification Gate
 
