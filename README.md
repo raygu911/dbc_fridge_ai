@@ -1,92 +1,49 @@
 # FridgeAI Training Program
 
-> Build a resume-worthy AI engineering project from application foundations through Retrieval-Augmented Generation and production engineering.
+> Build, productionize, and deploy a resume-worthy AI engineering project, then optionally deepen its retrieval quality and observability.
 
-FridgeAI is a curriculum-first repository. Application code is organized into standalone session milestones so trainees can run, test, compare, and explain the system at each stage instead of seeing only the final implementation.
+FridgeAI is organized as cumulative project milestones. The required Base Track covers the complete journey from application development through AWS deployment. The Advanced Track contains optional AI engineering extensions.
 
-> **Current status:** All four base sessions are complete. Advanced modules are planned follow-up training.
+> **Current status:** Base Sessions 1 and 2 are implemented. Base Sessions 3 and 4 and all Advanced modules are planned.
 
 ## Training Tracks
 
 | Track | Purpose | Status |
 | --- | --- | --- |
-| [Base training](base/) | Build the complete FridgeAI MVP across four sequential sessions | Complete |
-| [Advanced training](advanced/) | Extend the MVP with retrieval, evaluation, observability, and deployment techniques | Planned |
+| [Base training](base/) | Build the local RAG application, provision AWS with Terraform, and deploy through CI/CD | Sessions 1–2 complete; Sessions 3–4 planned |
+| [Advanced training](advanced/) | Evaluate and improve retrieval, reranking, and distributed observability | Planned and optional |
 
 ## Repository Structure
 
 ```text
 dbc_fridge_ai/
-├── README.md
-├── LICENSE
+├── CURRICULUM_RESTRUCTURE_PLAN.md
 ├── base/
-│   ├── README.md
-│   ├── session-1-foundation/
-│   ├── session-2-semantic-search/
-│   ├── session-3-rag/
-│   └── session-4-production/
+│   ├── session-1-application-and-search/
+│   ├── session-2-rag-and-production/
+│   ├── session-3-aws-and-terraform/
+│   └── session-4-deployment-and-operations/
 └── advanced/
-    ├── README.md
     ├── module-1-evaluation/
     ├── module-2-hybrid-retrieval/
     ├── module-3-reranking/
-    ├── module-4-observability/
-    └── module-5-cloud-deployment/
+    └── module-4-advanced-observability/
 ```
-
-The root contains curriculum navigation only. Run application, Docker, Ruff, and pytest commands from an individual session directory.
 
 ## Base Training Roadmap
 
-| Session | Focus | Effort | Estimated guided time | Status |
-| --- | --- | --- | --- | --- |
-| [Session 1 — Application Foundation](base/session-1-foundation/) | FastAPI, PostgreSQL, Streamlit, Docker, and tests | Moderate | 1.5–2 hours | Complete |
-| [Session 2 — Semantic Retrieval](base/session-2-semantic-search/) | FastEmbed, Qdrant, and semantic search | Moderate–high | 1.5–2 hours | Complete |
-| [Session 3 — RAG and Background Processing](base/session-3-rag/) | Ollama, grounded generation, Redis, and Celery | High | 2–2.5 hours | Complete |
-| [Session 4 — Production Engineering](base/session-4-production/) | CI, resilience, logging, UX, and project presentation | High | 1.5–2 hours | Complete |
+| Session | Focus | Guided hands-on estimate | Status |
+| --- | --- | ---: | --- |
+| [Session 1 — Application and Search](base/session-1-application-and-search/) | FastAPI, PostgreSQL, Streamlit, Docker, FastEmbed, Qdrant, and semantic search | 3–4 hours | Complete |
+| [Session 2 — RAG and Production](base/session-2-rag-and-production/) | Ollama, grounded generation, Redis, Celery, tests, logging, resilience, and CI | 3–4 hours | Complete |
+| [Session 3 — AWS and Terraform](base/session-3-aws-and-terraform/) | AWS architecture, ECS/Fargate, data services, IAM, and Terraform | 4–6 hours | Planned |
+| [Session 4 — Deployment and Operations](base/session-4-deployment-and-operations/) | OIDC, ECR, CI/CD, rollback, monitoring, recovery, and cost control | 4–6 hours | Planned |
 
-Estimated guided implementation time for all four base sessions is **6.5–8.5 hours**. These estimates exclude environment setup, downloads, breaks, and optional experimentation.
-
-## How to Run a Session
-
-Each completed session is an independent Python project containing its own source code, tests, environment template, Dockerfile, Compose configuration, and README.
-
-For example, to run Session 2:
-
-```bash
-cd base/session-2-semantic-search
-cp .env.example .env
-docker compose up --build -d
-docker compose ps
-```
-
-To run its quality checks:
-
-```bash
-python -m pip install -e ".[dev]"
-ruff check .
-pytest -v
-```
-
-Stop the milestone when finished:
-
-```bash
-docker compose down
-```
-
-Run only one milestone Docker environment at a time because the standalone projects intentionally use the same local ports.
+The complete hands-on Base Track is expected to require **14–20 guided hours**. A 6–8-hour accelerated workshop requires prepared code, infrastructure, and selected exercises rather than building every component from scratch.
 
 ## Milestone Progression
 
 ### Session 1
-
-```text
-User → Streamlit → FastAPI → PostgreSQL
-```
-
-Trainees build the application foundation, structured recipe API, persistence layer, frontend integration, container environment, validation, and automated tests.
-
-### Session 2
 
 ```text
 User → Streamlit → FastAPI
@@ -94,55 +51,51 @@ User → Streamlit → FastAPI
                     └── FastEmbed → Qdrant
 ```
 
-Trainees add recipe embeddings, persistent vector storage, natural-language semantic search, similarity scores, and vector-to-relational result mapping.
+Trainees build the application foundation, persistence layer, frontend integration, container environment, embeddings, vector storage, semantic search, validation, and tests.
 
-### Session 3
+### Session 2
 
 ```text
 User → Streamlit → FastAPI
                     ├── PostgreSQL
-                    ├── Qdrant retrieval → Ollama / Gemma 3
+                    ├── Qdrant retrieval → Ollama / Gemma
                     └── Redis → Celery → FastEmbed → Qdrant indexing
 ```
 
-Trainees build grounded AI recommendations, return retrieved sources, integrate a local language model, and move embedding work into retryable background tasks.
+Trainees add grounded recommendations, source attribution, background indexing, structured logs, request correlation, readiness checks, resilient UI behavior, failure-path tests, and CI.
+
+### Session 3
+
+Trainees adapt the application for cloud configuration, map local services to AWS, and provision networking, compute, data, identity, secrets, and logging with Terraform.
 
 ### Session 4
 
-Trainees productionize the completed application with correlated structured logging, liveness and dependency readiness probes, resilient UI errors, continuous integration, expanded failure-path tests, operational documentation, and an interview-ready project narrative.
+Trainees build immutable images, authenticate GitHub Actions through OIDC, deploy through CI/CD, run migrations and smoke tests, verify rollback and recovery, monitor the system, and document cost-aware teardown.
 
-## Advanced Training Goals
+## Running an Implemented Session
 
-The [advanced track](advanced/) will build on the completed base MVP through standalone modules in a measurement-first sequence:
+```bash
+cd base/session-2-rag-and-production
+cp .env.example .env
+docker compose up --build -d --wait
+python -m pip install -e ".[dev]"
+ruff check .
+pytest
+```
 
-- Retrieval and generation evaluation
-- Hybrid semantic and lexical retrieval
-- Cross-encoder reranking
-- Tracing, metrics, logging, and operational dashboards
-- Managed cloud deployment and infrastructure as code
+Run only one local milestone at a time because the standalone projects use the same ports.
 
-Advanced modules may introduce additional model downloads, infrastructure, datasets, and operating costs.
+## Advanced Extensions
 
-## Prerequisites
+After completing the Base Track, trainees may continue with retrieval and generation evaluation, hybrid retrieval, cross-encoder reranking, and advanced distributed observability. These extensions are optional and are not required to satisfy the four-session program promise.
 
-Base training requires:
+## Prerequisites and Cost
 
-- Git
-- Docker Desktop
-- Python 3.12 or later
-- Basic Python and command-line familiarity
-
-Session 3 additionally requires native [Ollama](https://ollama.com/download/mac) and the `gemma3:4b` model. See the Session 3 README for platform-specific setup.
-
-## Data and Disk Usage
-
-Milestone directories duplicate source code only. They do not contain Python environments, Docker images, databases, vector data, model caches, Ollama models, or secrets.
-
-Avoid `docker compose down --volumes` unless you intentionally want to delete a milestone's local PostgreSQL, Qdrant, Redis, and model-cache volumes.
+Sessions 1 and 2 require Git, Docker Desktop, Python 3.12 or later, basic Python and command-line familiarity, and native Ollama with the configured model. Sessions 3 and 4 additionally require an AWS account and may incur charges. Set a budget and verify teardown before provisioning resources.
 
 ## Educational Safety Notice
 
-FridgeAI is an educational project. Dietary tags, allergy-related filtering, retrieved content, and AI-generated recommendations must not be treated as medical or food-safety advice.
+FridgeAI is educational. Dietary tags, retrieved content, and AI-generated recommendations must not be treated as medical or food-safety advice.
 
 ## License
 
